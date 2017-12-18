@@ -89,45 +89,44 @@ class Materi extends CI_Controller {
 
 	public function upload_tugas(){
 		if($_POST){
-			$tugas 				= 	'';
-			$submateri_id 		=	$this->input->post('submateri');
-			$kontenmateri_id 	=	$this->input->post('kontenmateri');
-			$tipekonten 		=	$this->input->post('tipekonten');
-
-			$folder 	= $this->username;
-
-			$config['upload_path']          = realpath('./../')."/upload/tugas/".$folder;	
-	    	$config['allowed_types']        = 'pdf|mp4|webm|oggv|zip|rar|jpg|doc|docx';
-	    	$config['file_name']			= $submateri_id.'-'.$_FILES['uptugas']['name'];
+        $tugas 				= 	'';
+        $submateri_id 		=	$this->input->post('submateri');
+        $kontenmateri_id 	=	$this->input->post('kontenmateri');
+        $tipekonten 		=	$this->input->post('tipekonten');
+        
+        $folder                     = $this->username;
+        $config['upload_path']      = realpath('./../')."/upload/tugas/".$folder;	
+        $config['allowed_types']    = 'pdf|mp4|webm|oggv|zip|rar|jpg|doc|docx';
+        $config['file_name']        = $submateri_id.'-'.$_FILES['uptugas']['name'];
 
 	        $this->load->library('upload');
 	        $this->upload->initialize($config);
 
 	        if($this->upload->do_upload('uptugas')){
               $tugas = $folder.'/'.$this->upload->data('file_name');
-				      chmod($config['upload_path'].'/'.$isi, 0777); // note that it's usually changed to 0755
-
-				// SET PROGRESS
-				if($tipekonten == 'class'){
-					set_progress($submateri_id,$tugas,'','');
-				}
-				else{
-					set_progress($submateri_id,'','tugas','');
-				}
-				
-                $activity   =   "mengupload tugas ".$$tipekonten."untuk submateri ".$submateri_id.")";
-                $this->Siswa_model->write_log($activity);
-                
-
-				$this->session->set_flashdata('message','<label class="label label-success clues">Upload berhasil, tunggu proses penilaian.</label>');
-	        }
-	        else{
-	        	$error = array('error' => $this->upload->display_errors());
-	        	
-	        	$this->session->set_flashdata('message','<label class="label label-danger clues">Upload gagal. '.strip_tags($error['error']).'</label>');	
+				      chmod($config['upload_path'].'/'.$this->upload->data('file_name'), 0777); // note that it's usually changed to 0755
+              
+              echo $config['upload_path'];
+              
+				        // SET PROGRESS
+				        if($tipekonten == 'class'){
+					           set_progress($submateri_id,$tugas,'','');
+				        }
+				        else{
+					           set_progress($submateri_id,'','tugas','');
+				        }
+				        
+            echo "tipekonten=".$tipekonten;
+            echo "submateri_id=".$submateri_id;  
+//                $activity   =   "mengupload tugas ".$tipekonten."untuk submateri ".$submateri_id.")";
+//                $this->Siswa_model->write_log($activity);
+//				        $this->session->set_flashdata('message','<label class="label label-success clues">Upload berhasil, tunggu proses penilaian.</label>');
+	        }else{
+	           $error = array('terjadi kesalahan' => $this->upload->display_errors());
+	           $this->session->set_flashdata('message','<label class="label label-danger clues">Upload gagal. '.strip_tags($error['error']).'</label>');	
 	        }	
 		}
-		redirect('materi/activity/'.$kontenmateri_id);
+		//redirect('materi/activity/'.$kontenmateri_id);
 	}
 	// TUGAS
 		// JIKA UPLOAD TUGAS
